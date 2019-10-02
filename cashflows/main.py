@@ -1,11 +1,17 @@
 import fire
-import json 
-
+import json
+from util import Cashflow
 from util import InvestmentProject
 
 
 class Main(object):
-    
+
+    def present_value(self, amount, t, i):
+        flow = Cashflow(amount, t)
+        print("The present value of cashflow{amount} in time {t} is {pv}.".format(amount=amount, t=t,
+                                                                                  pv=flow.present_value(
+                                                                                      interest_rate=i)))
+
     @staticmethod
     def describe_investment(filepath, hurdle_rate=None):
         investment_project = InvestmentProject.from_csv(filepath=filepath, hurdle_rate=hurdle_rate)
@@ -13,9 +19,13 @@ class Main(object):
         print(json.dumps(description, indent=4))
 
     @staticmethod
-    def plot_investment(filepath, save="", show=False):
-        # TODO: implement plot_investment method
-        raise NotImplementedError
+    def plot_investment(filepath, save="", show=""):
+        if show == False:
+            inv = InvestmentProject.plot(filepath=filepath, show=show)
+            fig = inv.plot()
+        if show == None:
+            fig.savefig(".png")
+
 
 if __name__ == "__main__":
     fire.Fire(Main)
