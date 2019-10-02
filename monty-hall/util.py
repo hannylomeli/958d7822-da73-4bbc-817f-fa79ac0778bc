@@ -3,21 +3,21 @@ import random
 
 class Door(object):
 
-    def __init__(self, value):
+    def _init_(self, value):
         self.value = value
 
-    def __repr__(self):
+    def _repr_(self):
         return "Door({value})".format(value=self.value)
 
 
 class Game(object):
 
-    def __init__(self, winning_door_name, options, default_choice=None):
+    def _init_(self, winning_door_name, options, default_choice=None):
         self.default_choice = default_choice if default_choice is not None else random.choice(list(options.keys()))
         self.winning_door_name = winning_door_name
         self.options = options
 
-    def __repr__(self):
+    def _repr_(self):
         return "Game Configuration:\n\t{doors}".format(
             doors="\n\t".join(["{} -> {}".format(name, door) for name, door in self.options.items()])
         )
@@ -40,7 +40,7 @@ class Game(object):
 
 class Host(object):
 
-    def __init__(self, manage_game):
+    def _init_(self, manage_game):
         self.game_evolution = [manage_game]
 
     def get_game(self, t):
@@ -84,7 +84,7 @@ class Guest(object):
         CHANGE = "change"
         all = [RANDOM, STAY, CHANGE]
 
-    def __init__(self):
+    def _init_(self):
         self.memory = []
 
     def get_latest_choice(self):
@@ -118,8 +118,12 @@ class Guest(object):
         :param options: a dictionary containing door_name:door_obj
         :return: the key of the selected option (i.e., door_name)
         """
+        #print(self.memory[-1].)
+        option=random.choice([door_name for door_name in options.keys() if door_name != self.get_latest_choice()])
+        self.memory.append(option)
+        return option
         # TODO: implement 'change' strategy
-        raise NotImplementedError
+        #raise NotImplementedError
 
     def choose(self, options, strategy):
         if strategy == Guest.Strategy.RANDOM:
