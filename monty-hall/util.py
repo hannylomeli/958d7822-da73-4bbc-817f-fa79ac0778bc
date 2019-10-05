@@ -2,22 +2,21 @@ import random
 
 
 class Door(object):
-
-    def _init_(self, value):
+    def __init__(self, value):
         self.value = value
 
-    def _repr_(self):
+    def __repr__(self):
         return "Door({value})".format(value=self.value)
 
 
 class Game(object):
 
-    def _init_(self, winning_door_name, options, default_choice=None):
+    def __init__(self, winning_door_name, options, default_choice=None):
         self.default_choice = default_choice if default_choice is not None else random.choice(list(options.keys()))
         self.winning_door_name = winning_door_name
         self.options = options
 
-    def _repr_(self):
+    def __repr__(self):
         return "Game Configuration:\n\t{doors}".format(
             doors="\n\t".join(["{} -> {}".format(name, door) for name, door in self.options.items()])
         )
@@ -40,7 +39,7 @@ class Game(object):
 
 class Host(object):
 
-    def _init_(self, manage_game):
+    def __init__(self, manage_game):
         self.game_evolution = [manage_game]
 
     def get_game(self, t):
@@ -84,7 +83,7 @@ class Guest(object):
         CHANGE = "change"
         all = [RANDOM, STAY, CHANGE]
 
-    def _init_(self):
+    def __init__(self):
         self.memory = []
 
     def get_latest_choice(self):
@@ -93,37 +92,19 @@ class Guest(object):
         return self.memory[-1]
 
     def _choose_strategy_random(self, options):
-        """Random Strategy
-        The "random" strategy returns a random choice of all the available options.
-        :param options: a dictionary containing door_name:door_obj
-        :return: the key of the selected option (i.e., door_name).
-        """
         option = random.choice([door_name for door_name in options.keys()])
         self.memory.append(option)
         return option
 
     def _choose_strategy_stay(self, options):
-        """Stay Strategy
-        The "stay" strategy return the previous choice.
-        :param options: a dictionary containing door_name:door_obj
-        :return: the key of the selected option (i.e., door_name)
-        """
         option = self.get_latest_choice()
         self.memory.append(option)
         return option
 
     def _choose_strategy_change(self, options):
-        """Change Strategy
-        The "change" strategy returns any available option different than the current one (latest).
-        :param options: a dictionary containing door_name:door_obj
-        :return: the key of the selected option (i.e., door_name)
-        """
-        #print(self.memory[-1].)
-        option=random.choice([door_name for door_name in options.keys() if door_name != self.get_latest_choice()])
-        self.memory.append(option)
-        return option
-        # TODO: implement 'change' strategy
-        #raise NotImplementedError
+        options.pop(self.memory[-1])
+        key = self._choose_strategy_random(options=options)
+        return key
 
     def choose(self, options, strategy):
         if strategy == Guest.Strategy.RANDOM:
